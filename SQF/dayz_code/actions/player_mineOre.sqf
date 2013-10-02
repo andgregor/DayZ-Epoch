@@ -3,14 +3,17 @@
 	Usage: spawn player_mineOre;
 	Made for DayZ Epoch please ask permission to use/edit/distrubute email vbawol@veteranbastards.com.
 */
-private ["_isOk","_i","_objName","_objInfo","_lenInfo","_started","_finished","_animState","_isMedic","_proceed","_counter","_itemOut","_countOut","_rock","_distance2d","_rockBox","_rocks","_findNearestRock"];
+private ["_isOk","_i","_objName","_objInfo","_lenInfo","_started","_finished","_animState","_isMedic","_proceed","_counter","_itemOut","_countOut","_rock","_distance2d","_rockBox","_rocks","_findNearestRock","_goldChance","_silverChance","_copperChance","_preciousRand"];
 
 if(TradeInprogress) exitWith { cutText ["\n\nOre Mining already in progress." , "PLAIN DOWN"]; };
 TradeInprogress = true;
 
 // allowed rocks list move this later
 _rocks = ["r2_boulder2.p3d","r2_rock1.p3d","r2_rocktower.p3d","r2_boulder1.p3d"];
-
+_goldChance = 2;
+_silverChance = 10;
+_copperChance = 20;
+_preciousRand = 0;
 //_item = _this;
 call gear_ui_init;
 
@@ -51,8 +54,8 @@ if (count(_findNearestRock) >= 1) then {
 		if(_countOut<1)then{_countOut=4};
 
 		//diag_log format["DEBUG ROCK DISTANCE: %1 - %2 = %3", _rockBox,_distance2d,(_distance3d-_distance2d)];
-		axeDiagLog = format["DEBUG ROCK DISTANCE: _rockBox:%1 | _distance2d:%2  | typeOf:%3 | alive:%4 | _countOut:%5 | damage:%6", _rockBox,_distance2d,typeOf _rock,alive _rock,_countOut,damage _rock ];
-		publicVariable "axeDiagLog";
+		//axeDiagLog = format["DEBUG ROCK DISTANCE: _rockBox:%1 | _distance2d:%2  | typeOf:%3 | alive:%4 | _countOut:%5 | damage:%6", _rockBox,_distance2d,typeOf _rock,alive _rock,_countOut,damage _rock ];
+		//publicVariable "axeDiagLog";
 	
 		// Start ore mining
 		_counter = 0;
@@ -107,21 +110,27 @@ if (count(_findNearestRock) >= 1) then {
 		};
 
 		if (_proceed) then {
-
+			
 			_itemOut = "PartOre";
 			
 			_item = createVehicle ["WeaponHolder", getPosATL player, [], 1, "CAN_COLLIDE"];
 			_item addMagazineCargoGlobal [_itemOut,_countOut];
+			_preciousRand = random 100;
+			if(_preciousRand<_goldChance)then{_item addMagazineCargoGlobal ["ItemGoldBar",1];};
+			_preciousRand = random 100;
+			if(_preciousRand<_silverChance)then{_item addMagazineCargoGlobal ["ItemSilverBar",1];};
+			_preciousRand = random 100;
+			if(_preciousRand<_copperChance)then{_item addMagazineCargoGlobal ["ItemCopperBar",1];};
 			_item modelToWorld getPosATL player;
 			_item setdir (getDir player);
 			player reveal _item;
 			
-			// break rock
+			/* break rock
 			if("" == typeOf _rock) then {
 				_rock setDamage 1;
 			};
-			//diag_log format["DEBUG TREE DAMAGE: %1", _rock];
-
+			diag_log format["DEBUG TREE DAMAGE: %1", _rock];
+			*/
 			cutText [format["\n\n%1 piles of ore has been successfully added in front of you.", _countOut], "PLAIN DOWN"];
 
 		} else {
