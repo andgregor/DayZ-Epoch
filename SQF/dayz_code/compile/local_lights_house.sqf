@@ -31,7 +31,7 @@ if(!isNil "_objHouse")then{
 		_lightPcnt = (player distance _x)/10;
 		_brtns = _brtns * _lightPcnt;//Light brightness by percentage
 		//Min / Max Levels
-		if (_brtns > 0.06)then{_brtns = 0.06;};
+		if (_brtns > 0.04)then{_brtns = 0.04;};
 		if (_brtns < 0.015)then{_brtns = 0.015;};
 		
 		_objLightPoint = nearestObject [_x, "#lightpoint"];
